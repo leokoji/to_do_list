@@ -1,0 +1,24 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+
+# Ferramentas de desenvolvimento
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Banco local e arquivos temporários
+*.db
+*.sqlite
+*.sqlite3
+
+# Builds e artefatos
+build/
+dist/
+
+# Configurações locais
+.env
