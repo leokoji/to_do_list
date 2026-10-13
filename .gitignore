@@ -22,3 +22,6 @@ dist/
 
 # Configurações locais
 .env
+
+#Arquivos internos no flet
+.flet/
