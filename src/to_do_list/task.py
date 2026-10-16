@@ -54,14 +54,4 @@ class Task:
         self.status = Status.CONCLUIDA
         self.data_conclusao = date.today()
 
-        
-
-task1 = Task("tarefa", "isso é uma tarefa", Tipo.UNICA)
-
-task2 = Task("segunda tarefa", "essa é a segunda tarefa", Tipo.RECORRENTE, 354)
-print("antes de concluir")
-task1.exibir()
-
-task1.concluir()
-print("depois de concluir")
-task1.exibir()
+    

@@ -8,3 +8,13 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     ft.run(main)
+
+    task1 = Task("tarefa", "isso é uma tarefa", Tipo.UNICA)
+
+    task2 = Task("segunda tarefa", "essa é a segunda tarefa", Tipo.RECORRENTE, 354)
+    print("antes de concluir")
+    task1.exibir()
+
+    task1.concluir()
+    print("depois de concluir")
+    task1.exibir()

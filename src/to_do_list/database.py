@@ -1,0 +1,38 @@
+import sqlite3
+
+def criar_tabela():
+    conn = sqlite3.connect("task.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS task(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            titulo TEXT NOT NULL,
+            descricao TEXT NOT NULL,
+            tipo TEXT NOT NULL,
+            status TEXT NOT NULL,
+            periodo INTEGER,
+            data_criacao TEXT NOT NULL,
+            data_conclusao TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def criar_tarefa(task):
+    conn = sqlite3.connect("task.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO task(
+            titulo,
+            descricao,
+            tipo,
+            periodo,
+            status,
+            data_criacao,
+            data_conclusao)
+            VALUES (?,?,?,?,?,?,?)
+    """, (task.titulo,task.descricao,task.tipo.value,task.periodo,task.status.value,task.data_criacao.isoformat(),None,))
+    conn.commit()
+    conn.close()
