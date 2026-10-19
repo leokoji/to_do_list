@@ -56,7 +56,7 @@ def concluir_tarefa(task):
 
     cursor.execute("""
         UPDATE task SET data_conclusao = ?, status = ? WHERE id = ?
-    """,(task.data_conclusao.isoformat(), task.status, task.id))
+    """,(task.data_conclusao.isoformat(), task.status.value, task.id))
     
     conn.commit()
     conn.close()

@@ -26,5 +26,3 @@ dist/
 #Arquivos internos no flet
 .flet/
 
-#debuggers
-.tests/

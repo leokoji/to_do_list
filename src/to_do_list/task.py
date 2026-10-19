@@ -19,6 +19,7 @@ class Task:
         self.data_criacao = date.today()
         self.data_conclusao = None
         self.status = Status.PENDENTE
+        self.id = None
 
         if self.tipo == Tipo.UNICA:
             self.periodo = None
