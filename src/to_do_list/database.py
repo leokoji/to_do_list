@@ -176,7 +176,3 @@ def inicializar():
         task = Task(titulo,descricao,task_id,tipo,status,periodo,data_criacao, data_conclusao)
         lista_task.append(task)
     return lista_task
-
-def adicionar_itens_teste():
-    task = Task("item3","issoéumteste3")
-    criar_tarefa(task)

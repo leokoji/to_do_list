@@ -123,3 +123,56 @@ def test_consultar_historico(tmp_path, monkeypatch):
     assert date.fromisoformat(linhas_historico[0][4]) == task.data_criacao
     assert date.fromisoformat(linhas_historico[0][5]) == task.data_conclusao
 
+def test_excluir_tarefa(tmp_path, monkeypatch):
+    database_path = tmp_path / "task.db"
+    monkeypatch.setattr(database, "DB_PATH", database_path)
+
+    database.criar_tabela()
+    titulo = "Estudar"
+    descricao = "estttudar"
+
+    task = Task(titulo, descricao)
+    task.task_id = database.criar_tarefa(task)
+
+    titulo = "Ee"
+    descricao = "ii"
+
+    task = Task(titulo,descricao)
+    task.task_id = database.criar_tarefa(task)
+
+    lista = database.listar_tarefas()
+
+    assert len(lista) == 2
+
+    database.excluir_tarefa(task.task_id)
+    lista = database.listar_tarefas()
+
+    assert len(lista) == 1
+
+def test_editar_tarefa(tmp_path, monkeypatch):
+    database_path = tmp_path / "task.db"
+    monkeypatch.setattr(database, "DB_PATH", database_path)
+
+    database.criar_tabela()
+    titulo = "Estudar"
+    descricao = "EEstudar"
+
+    task = Task(titulo, descricao)
+    task.task_id = database.criar_tarefa(task)
+    lista = database.listar_tarefas()
+
+    assert lista[0][1] == titulo
+    assert lista[0][2] == descricao
+
+    titulo1 = "mudei as coisa"
+    descricao1 = "mudei otas coisa"
+    tipo = Tipo.UNICA
+
+    task.editar(titulo1, descricao1, tipo)
+    database.editar_tarefa(task)
+    lista = database.listar_tarefas()
+
+    assert lista[0][1] == titulo1
+    assert lista[0][2] == descricao1
+
+

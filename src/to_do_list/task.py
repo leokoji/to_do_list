@@ -57,7 +57,7 @@ class Task:
         Criado em: {self.data_criacao}
         Concluido em: {self.data_conclusao}
         Status: {self.status}
-        """)
+        """
 
     def concluir(self):
         self.status = Status.CONCLUIDA
