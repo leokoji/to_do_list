@@ -1,0 +1,168 @@
+import flet as ft
+
+def mostrar_catalogo(page: ft.Page):
+    page.title = "Catálogo de livros"
+
+    titulo = ft.Text("Meus livros", size=24)
+
+    botao = ft.Button("Adicionar livro")
+
+    forma = ft.Container(
+        content=ft.Text("Área de destaque"),
+        width=220,
+        height=80,
+        bgcolor="#DDEEFF",
+        border_radius=12,
+        padding=12,
+    )
+
+    cartao = ft.Card(
+        content=ft.Container(
+            content=ft.Column(
+                [
+                    ft.Text("O Hobbit", size=20),
+                    ft.Text("J. R. R. Tolkien"),
+                    botao,
+                ],
+                spacing=8,
+            ),
+            padding=16,
+        )
+    )
+
+    page.add(
+        ft.Column(
+            [
+                titulo,
+                ft.Row([ft.Text("Categoria:"), ft.Text("Fantasia")]),
+                cartao,
+                forma,
+            ],
+            spacing=16,
+        )
+    )
+
+ft.run(mostrar_catalogo)
+
+
+# Manual prático de referência — Flet 1.0.4
+
+As opções abaixo são exemplos de como passar parâmetros ao criar controles. Os nomes diferenciam maiúsculas de minúsculas: use `ft.Card`, `ft.Container`, `ft.Row` e `ft.Column`.
+
+`width`, `height`, `padding`, `margin` e `spacing` usam unidades lógicas da interface — costumam ser chamadas de pixels, mas não são necessariamente pixels físicos do monitor.
+
+## Container — caixa com conteúdo e aparência
+
+```python
+ft.Container(
+    content=ft.Text("Área de destaque"),  # controle colocado dentro da caixa
+    width=260,                            # largura
+    height=100,                           # altura
+    padding=20,                           # espaço entre conteúdo e borda
+    margin=12,                            # espaço externo ao redor da caixa
+    alignment=ft.Alignment.CENTER,        # centraliza o conteúdo dentro da caixa
+    bgcolor="#DDEEFF",                   # cor de fundo
+    border=ft.Border.all(2, "#336699"),   # borda: espessura e cor
+    border_radius=12,                     # arredonda os cantos
+)
+```
+
+`padding` fica dentro da caixa; `margin` fica fora. `alignment` posiciona o conteúdo dentro do `Container`.
+
+## Card — painel para agrupar conteúdo
+
+```python
+ft.Card(
+    content=ft.Container(
+        content=ft.Column(
+            [
+                ft.Text("O Hobbit"),
+                ft.Text("J. R. R. Tolkien"),
+            ],
+            spacing=8,                    # espaço vertical entre os textos
+        ),
+        padding=16,                       # espaço interno do conteúdo do cartão
+    ),
+    elevation=4,                          # elevação/sombra do cartão
+    bgcolor="#FFFFFF",                   # cor de fundo
+    shadow_color="#888888",              # cor da sombra
+)
+```
+
+O `Card` recebe um controle em `content`. Aqui, esse controle é um `Container`, que por sua vez contém uma `Column`. Assim, o `Container` fornece o espaçamento interno.
+
+## Row — organiza controles horizontalmente
+
+```python
+ft.Row(
+    controls=[
+        ft.Text("Categoria:"),
+        ft.Text("Fantasia"),
+        ft.Button("Abrir"),
+    ],
+    spacing=12,                                      # espaço entre controles
+    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,   # distribui no eixo horizontal
+    vertical_alignment=ft.CrossAxisAlignment.CENTER,# alinha no eixo vertical
+    wrap=True,                                       # permite quebrar em outra linha
+    run_spacing=8,                                   # espaço entre linhas quebradas
+)
+```
+
+`Row` não tem `padding` nem `bgcolor` diretamente. Para dar fundo e espaço interno a uma linha, envolva o `Row` em um `Container`.
+
+## Column — organiza controles verticalmente
+
+```python
+ft.Column(
+    controls=[
+        ft.Text("Biblioteca"),
+        ft.Text("Livros disponíveis"),
+        ft.Button("Adicionar livro"),
+    ],
+    spacing=12,                                      # espaço entre controles
+    alignment=ft.MainAxisAlignment.START,            # alinhamento no eixo vertical
+    horizontal_alignment=ft.CrossAxisAlignment.CENTER,# alinha no eixo horizontal
+    scroll=ft.ScrollMode.AUTO,                        # permite rolar se faltar espaço
+)
+```
+
+## Text — mostra texto
+
+```python
+ft.Text(
+    "Meus livros",          # conteúdo textual
+    size=24,                 # tamanho da fonte
+    color="#223344",        # cor do texto
+    weight=ft.FontWeight.BOLD,# espessura da fonte
+    italic=False,            # ativa/desativa itálico
+    text_align=ft.TextAlign.CENTER,  # alinhamento do texto
+)
+```
+
+## Button — botão visual
+
+```python
+ft.Button(
+    content="Adicionar livro",  # texto/conteúdo do botão
+    width=180,                  # largura
+    height=48,                  # altura
+    bgcolor="#336699",         # cor de fundo
+    color="#FFFFFF",           # cor do conteúdo/texto
+    disabled=False,             # True desativa a interação
+)
+```
+
+Este botão ainda não executa uma ação. `on_click` é o parâmetro que associa uma função ao clique; vamos estudar eventos separadamente.
+
+## Propriedades comuns a vários controles
+
+```python
+ft.Container(
+    content=ft.Text("Aviso"),
+    visible=True,  # False oculta o controle
+    opacity=1.0,   # 1.0 totalmente opaco; 0.0 transparente
+    expand=False,  # pode ser True ou um fator de expansão no layout pai
+)
+```
+
+Nem todo controle aceita todas as propriedades. Consulte o exemplo da classe específica antes de usar um parâmetro.

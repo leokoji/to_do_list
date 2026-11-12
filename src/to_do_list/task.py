@@ -58,7 +58,8 @@ class Task:
         Concluido em: {self.data_conclusao}
         Status: {self.status}
         """
-
+        )
+        
     def concluir(self):
         self.status = Status.CONCLUIDA
         self.data_conclusao = date.today()
