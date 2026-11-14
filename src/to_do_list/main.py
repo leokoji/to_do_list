@@ -34,20 +34,6 @@ def main(page:ft.Page):
 
     aviso_atualizacao_tarefa = ft.Text()
 
-    menu_opcoes_tarefa = ft.PopupMenuButton(
-        content=ft.Text("..."),
-        items=[
-            ft.PopupMenuItem(
-                content=ft.Text("Editar"),
-                on_click=lambda e: box_editar_tarefa(tarefa),
-            ),
-            ft.PopupMenuItem(
-                content=ft.Text("Deletar"),
-                on_click=lambda e: excluir_tarefa(),
-            ),
-        ],
-    )
-
     def tipo_alterado(e):
         periodo_text.visible = e.control.value == Tipo.RECORRENTE.value
         periodo_box.visible = e.control.value == Tipo.RECORRENTE.value
@@ -74,7 +60,7 @@ def main(page:ft.Page):
                     ),
                     ft.PopupMenuItem(
                         content=ft.Text("Deletar"),
-                        on_click=lambda e: excluir_tarefa(),
+                        on_click = lambda e, tarefa=tarefa: mostrar_janela_excluir_tarefa(e, tarefa),
                     ),
                 ],
             )
@@ -88,14 +74,17 @@ def main(page:ft.Page):
                         menu_opcoes_tarefa,
                         ],alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
                     ),
-                    ft.Row(
+                    ft.Column(
                         controls = [
                             ft.Text(tarefa.descricao),
+                        ],
+                    ),
+                    ft.Row(
+                        controls = [
                             checkbox_status,
-                        ],alignment = ft.MainAxisAlignment.SPACE_BETWEEN
-                    )]
-                )
-            )
+                        ],
+                    ),
+                    ]))
             cartoes.append(card)
         return cartoes
 
@@ -141,10 +130,49 @@ def main(page:ft.Page):
     page.window.height = 600
     page.window.resizable = True
 
-    def editar_tarefa():
-        ...
+    def editar_tarefa(e):
+        try:
+            titulo = titulo_box.value    
+            descricao = descricao_box.value
 
+            if tipo_box.value == Tipo.UNICA.value:
+                tipo = Tipo.UNICA
+                periodo = periodo_box.value
+            elif tipo_box.value is None:
+                tipo = None
+                periodo = periodo_box.value
+            elif tipo_box.value == Tipo.RECORRENTE.value:
+                tipo = Tipo.RECORRENTE
+                periodo = int(periodo_box.value)
+
+            tarefa_edicao.editar(titulo,descricao,tipo,periodo)
+            database.editar_tarefa(tarefa_edicao)
+
+            tarefa_edicao.titulo = titulo
+            tarefa_edicao.descricao = descricao
+            tarefa_edicao.tipo = tipo
+            tarefa_edicao.periodo = periodo
+
+            aviso_atualizacao_tarefa.color = "green"
+            aviso_atualizacao_tarefa.value = "Tarefa editada!"
+
+            tarefas.controls = gerar_cartoes()
+            page.update()
+            
+        except ValueError as erro:
+            print(str(erro))
+            aviso_atualizacao_tarefa.color = "red"
+            aviso_atualizacao_tarefa.value = str(erro)   
+        except TypeError:
+            print("Você deve inserir um valor em periodo.")
+            aviso_atualizacao_tarefa.color = "red"
+            aviso_atualizacao_tarefa.value = "voce deve inserir um valor em periodo."
+
+
+    tarefa_edicao = None
     def mostrar_janela_editar_tarefa(e, tarefa):
+        nonlocal tarefa_edicao
+        tarefa_edicao = tarefa
         titulo_box.value = tarefa.titulo
         descricao_box.value = tarefa.descricao
         periodo_box.value = tarefa.periodo
@@ -181,7 +209,7 @@ def main(page:ft.Page):
             height = 400,
             width = 400),
         actions = [
-            ft.TextButton("Editar", on_click = lambda e: page.show_dialog(janela_editar_tarefa))
+            ft.TextButton("Salvar", on_click = editar_tarefa)
         ]
     )
 
@@ -216,6 +244,38 @@ def main(page:ft.Page):
             ft.TextButton("Salvar", on_click = criar_Tarefa)
         ],)
 
+    def excluir_tarefa(e):
+        id_task = tarefa_exclusao.task_id
+
+        database.excluir_tarefa(id_task)
+        lista_tarefas.remove(tarefa_exclusao)
+
+        tarefas.controls = gerar_cartoes()
+        page.update()
+        page.pop_dialog()
+
+    janela_excluir_tarefa = ft.AlertDialog(
+        title = ft.Row( controls = [
+            ft.Text("Tem certeza que deseja excluir a tarefa?", color="red")],
+                alignment = ft.MainAxisAlignment.SPACE_BETWEEN
+            ),
+
+            content = ft.Container(
+                ft.Row(
+                    controls = [
+                        ft.TextButton("Sim.", on_click = excluir_tarefa),
+                        ft.TextButton("Não.", on_click = lambda a: page.pop_dialog())      
+                        ]
+                )
+            )
+    )
+
+    tarefa_exclusao = None
+    def mostrar_janela_excluir_tarefa(e, tarefa):
+        nonlocal tarefa_exclusao
+        tarefa_exclusao = tarefa
+        page.show_dialog(janela_excluir_tarefa)
+
     def mostrar_aba_criar_tarefa(e):
         page.show_dialog(janela_criar_tarefa)
 
@@ -237,11 +297,9 @@ def main(page:ft.Page):
 
     tarefas = ft.Column(controls=gerar_cartoes(), scroll = ft.ScrollMode.AUTO, expand = True)
 
-    debug = ft.TextButton("Debug", on_click = lambda e: page.update())
 
     page.add(cabecalho)
     page.add(tarefas)
-    page.add(debug)
 
 
 if __name__ == "__main__":
