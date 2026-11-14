@@ -32,7 +32,21 @@ def main(page:ft.Page):
     titulo_box = input_box()
     titulo_box.width = 400
 
-    mensagem_erro = ft.Text()
+    aviso_atualizacao_tarefa = ft.Text()
+
+    menu_opcoes_tarefa = ft.PopupMenuButton(
+        content=ft.Text("..."),
+        items=[
+            ft.PopupMenuItem(
+                content=ft.Text("Editar"),
+                on_click=lambda e: box_editar_tarefa(tarefa),
+            ),
+            ft.PopupMenuItem(
+                content=ft.Text("Deletar"),
+                on_click=lambda e: excluir_tarefa(),
+            ),
+        ],
+    )
 
     def tipo_alterado(e):
         periodo_text.visible = e.control.value == Tipo.RECORRENTE.value
@@ -51,17 +65,34 @@ def main(page:ft.Page):
     def gerar_cartoes():
         cartoes = []
         for tarefa in lista_tarefas:
+            menu_opcoes_tarefa = ft.PopupMenuButton(
+                content=ft.Text("..."),
+                items=[
+                    ft.PopupMenuItem(
+                        content=ft.Text("Editar"),
+                        on_click = lambda e, tarefa=tarefa: mostrar_janela_editar_tarefa(e, tarefa),
+                    ),
+                    ft.PopupMenuItem(
+                        content=ft.Text("Deletar"),
+                        on_click=lambda e: excluir_tarefa(),
+                    ),
+                ],
+            )
             checkbox_status = ft.Checkbox(label="Concluida")
             card = ft.Card(
                 content = ft.Column(
                     controls = [
-                    ft.Text(tarefa.titulo),
-                    
+                    ft.Row(
+                        controls = [
+                        ft.Text(tarefa.titulo),
+                        menu_opcoes_tarefa,
+                        ],alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
                     ft.Row(
                         controls = [
                             ft.Text(tarefa.descricao),
                             checkbox_status,
-                        ]
+                        ],alignment = ft.MainAxisAlignment.SPACE_BETWEEN
                     )]
                 )
             )
@@ -94,23 +125,67 @@ def main(page:ft.Page):
             tipo_box.value = None
             periodo_box.value = None
 
-            mensagem_erro.color = "green"
-            mensagem_erro.value = "Tarefa inclusa!"
+            aviso_atualizacao_tarefa.color = "green"
+            aviso_atualizacao_tarefa.value = "Tarefa inclusa!"
 
             tarefas.controls = gerar_cartoes()
             page.update()
             
         except ValueError as erro:
             print(str(erro))
-            mensagem_erro.color = "red"
-            mensagem_erro.value = str(erro)
+            aviso_atualizacao_tarefa.color = "red"
+            aviso_atualizacao_tarefa.value = str(erro)
 
     page.title = "To Do List"
     page.window.width = 800
     page.window.height = 600
     page.window.resizable = True
 
-    dialogo_criar = ft.AlertDialog(
+    def editar_tarefa():
+        ...
+
+    def mostrar_janela_editar_tarefa(e, tarefa):
+        titulo_box.value = tarefa.titulo
+        descricao_box.value = tarefa.descricao
+        periodo_box.value = tarefa.periodo
+        tipo_box.value = tarefa.tipo.value   
+
+        page.show_dialog(janela_editar_tarefa)
+ 
+
+    janela_editar_tarefa = ft.AlertDialog(        
+        title = ft.Row( controls = [
+            ft.Text("Detalhes da tarefa"),
+            ft.TextButton("x", on_click = lambda e: page.pop_dialog())
+        ],
+        alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
+        ),
+
+        content = ft.Container(
+            ft.Column(
+                controls = [
+                    ft.Text("titulo"),
+                    titulo_box,
+
+                    ft.Text("Descrição"),
+                    descricao_box,
+
+                    tipo_box,
+
+                    periodo_text,
+                    periodo_box,
+
+                    aviso_atualizacao_tarefa,
+                ],
+            ),
+            height = 400,
+            width = 400),
+        actions = [
+            ft.TextButton("Editar", on_click = lambda e: page.show_dialog(janela_editar_tarefa))
+        ]
+    )
+
+    janela_criar_tarefa = ft.AlertDialog(
         title = ft.Row( controls = [
         ft.Text("Detalhes Da Tarefa"), 
         ft.TextButton("x", on_click = lambda a: page.pop_dialog())], 
@@ -131,7 +206,7 @@ def main(page:ft.Page):
                     periodo_text,
                     periodo_box,
 
-                    mensagem_erro,
+                    aviso_atualizacao_tarefa,
                     ],
                     
                     ),
@@ -142,7 +217,7 @@ def main(page:ft.Page):
         ],)
 
     def mostrar_aba_criar_tarefa(e):
-        page.show_dialog(dialogo_criar)
+        page.show_dialog(janela_criar_tarefa)
 
     cabecalho = ft.Card (
         content = ft.Container(
